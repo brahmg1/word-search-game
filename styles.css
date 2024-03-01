@@ -1,0 +1,19 @@
+#wordSearchContainer {
+    text-align: center;
+    margin-top: 50px;
+}
+
+#wordSearchGrid {
+    margin-top: 20px;
+    font-size: 1.5em;
+}
+
+#wordList {
+    margin-top: 20px;
+}
+
+button {
+    margin-top: 20px;
+    padding: 10px 20px;
+    font-size: 1em;
+}
