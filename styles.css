@@ -17,3 +17,24 @@ button {
     padding: 10px 20px;
     font-size: 1em;
 }
+
+.cell {
+    display: inline-block;
+    width: 40px;
+    height: 40px;
+    border: 1px solid #000;
+    text-align: center;
+    line-height: 40px;
+}
+
+.cell.selected {
+    background-color: #ffff00;
+    /* Yellow background for selected cells */
+}
+
+.found-word {
+    text-decoration: line-through;
+    /* Cross off found words in word list */
+    color: #999;
+    /* Change color of found words */
+}
