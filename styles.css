@@ -1,3 +1,12 @@
+#startButton {
+    padding: 10px 20px;
+    background-color: gray;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
 #wordSearchGrid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(30px, 1fr));
