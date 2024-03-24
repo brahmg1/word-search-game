@@ -1,40 +1,28 @@
-#wordSearchContainer {
-    text-align: center;
-    margin-top: 50px;
-}
-
 #wordSearchGrid {
-    margin-top: 20px;
-    font-size: 1.5em;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(30px, 1fr));
+    /* Adjust grid columns dynamically */
+    gap: 2px;
+    border: 2px solid black;
+    padding: 5px;
 }
 
-#wordList {
-    margin-top: 20px;
-}
 
-button {
-    margin-top: 20px;
-    padding: 10px 20px;
-    font-size: 1em;
-}
+/* Styling for grid cells (letters) */
 
 .cell {
-    display: inline-block;
-    width: 40px;
-    height: 40px;
-    border: 1px solid #000;
-    text-align: center;
-    line-height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: transparent;
+    border: 1px solid black;
+    color: black;
+    font-size: 20px;
 }
 
-.cell.selected {
-    background-color: #ffff00;
-    /* Yellow background for selected cells */
-}
 
-.found-word {
-    text-decoration: line-through;
-    /* Cross off found words in word list */
-    color: #999;
-    /* Change color of found words */
+/* Styling for placed letters */
+
+.placed {
+    color: red;
 }
