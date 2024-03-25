@@ -12,40 +12,34 @@ function getRandomLetter() {
 
 // Generate a random word grid
 function generateWordGrid() {
-    const maxLength = Math.max(...words.map(word => word.length)); // Determine the maximum word length
-    const newGridSize = Math.max(maxLength, gridSize); // Update grid size to accommodate longer words
-
+    // Initialize an empty grid filled with random letters
     const wordGrid = [];
-    for (let i = 0; i < newGridSize; i++) {
+    for (let i = 0; i < gridSize; i++) {
         const row = [];
-        for (let j = 0; j < newGridSize; j++) {
+        for (let j = 0; j < gridSize; j++) {
             row.push(getRandomLetter());
         }
         wordGrid.push(row);
     }
 
+    // Place words in the grid
     for (const word of words) {
-        // Ensure word fits in the grid
-        if (word.length > newGridSize) {
-            continue; // Skip words that are too long for the grid
-        }
-
         let placed = false;
         let attempts = 0;
-
-        while (!placed && attempts < 100) {
-            const row = Math.floor(Math.random() * newGridSize);
-            const col = Math.floor(Math.random() * newGridSize);
+        while (!placed && attempts < 100) { // Limit attempts to avoid infinite loops
+            attempts++;
+            // Choose a random starting position
+            const row = Math.floor(Math.random() * gridSize);
+            const col = Math.floor(Math.random() * gridSize);
             const directionX = Math.random() < 0.5 ? 1 : -1;
             const directionY = Math.random() < 0.5 ? 1 : -1;
 
+            // Check if word can be placed in the chosen direction
             let newRow = row;
             let newCol = col;
             let fitsInGrid = true;
-
             for (let i = 0; i < word.length; i++) {
-                if (newRow < 0 || newRow >= newGridSize || newCol < 0 || newCol >= newGridSize ||
-                    (wordGrid[newRow][newCol] !== '' && wordGrid[newRow][newCol] !== word[i])) {
+                if (newRow < 0 || newRow >= gridSize || newCol < 0 || newCol >= gridSize || wordGrid[newRow][newCol] !== '') {
                     fitsInGrid = false;
                     break;
                 }
@@ -53,6 +47,7 @@ function generateWordGrid() {
                 newCol += directionX;
             }
 
+            // If word can be placed, insert it into the grid
             if (fitsInGrid) {
                 newRow = row;
                 newCol = col;
@@ -63,75 +58,41 @@ function generateWordGrid() {
                 }
                 placed = true;
             }
-
-            attempts++;
         }
     }
 
     return wordGrid;
 }
 
-// Generate a random word grid
-function generateWordGrid() {
-    const maxLength = Math.max(...words.map(word => word.length)); // Determine the maximum word length
-    const newGridSize = Math.max(maxLength, gridSize); // Update grid size to accommodate longer words
+// Function to display the word grid on the webpage
+function displayWordGrid(grid) {
+    const wordSearchGrid = document.getElementById("wordSearchGrid");
 
-    // Initialize an empty grid filled with random letters
-    const wordGrid = [];
-    for (let i = 0; i < newGridSize; i++) {
-        const row = [];
-        for (let j = 0; j < newGridSize; j++) {
-            row.push(getRandomLetter());
-        }
-        wordGrid.push(row);
-    }
+    // Clear any existing content in the grid
+    wordSearchGrid.innerHTML = "";
 
-    // Track coordinates of placed words
-    const placedWordsCoords = [];
+    // Loop through each row in the grid
+    grid.forEach(row => {
+        // Create a new row element
+        const rowElement = document.createElement("div");
+        rowElement.classList.add("row");
 
-    // Place words in the grid
-    for (const word of words) {
-        // Word placement logic
-        let placed = false;
-        while (!placed) {
-            // Choose a random starting position
-            const row = Math.floor(Math.random() * newGridSize);
-            const col = Math.floor(Math.random() * newGridSize);
-            const directionX = Math.random() < 0.5 ? 1 : -1;
-            const directionY = Math.random() < 0.5 ? 1 : -1;
+        // Loop through each cell in the row
+        row.forEach(letter => {
+            // Create a new cell element
+            const cell = document.createElement("div");
+            cell.classList.add("cell");
+            // Set the text content of the cell to the letter
+            cell.textContent = letter;
+            // Append the cell to the row
+            rowElement.appendChild(cell);
+        });
 
-            // Try placing the word horizontally
-            let newRow = row;
-            let newCol = col;
-            let fitsInGrid = true;
-            for (let i = 0; i < word.length; i++) {
-                if (newRow < 0 || newRow >= newGridSize || newCol < 0 || newCol >= newGridSize || (wordGrid[newRow][newCol] !== '' && wordGrid[newRow][newCol] !== word[i])) {
-                    fitsInGrid = false;
-                    break;
-                }
-                newRow += directionY;
-                newCol += directionX;
-            }
-
-            if (fitsInGrid) {
-                // Store coordinates of placed word
-                placedWordsCoords.push({ row, col, directionX, directionY, length: word.length });
-
-                // Place the word in the grid
-                newRow = row;
-                newCol = col;
-                for (let i = 0; i < word.length; i++) {
-                    wordGrid[newRow][newCol] = word[i];
-                    newRow += directionY;
-                    newCol += directionX;
-                }
-                placed = true;
-            }
-        }
-    }
-
-    return { wordGrid, placedWordsCoords };
+        // Append the row to the grid
+        wordSearchGrid.appendChild(rowElement);
+    });
 }
+
 
 // Function to handle the "Start Game" button click event
 function startGame() {
