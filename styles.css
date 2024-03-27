@@ -1,37 +1,31 @@
+/* styles.css */
+
 #startButton {
+    margin-top: 20px;
     padding: 10px 20px;
-    background-color: gray;
-    color: white;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
+    font-size: 1em;
 }
 
 #wordSearchGrid {
+    margin-top: 20px;
+    font-size: 1.5em;
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(30px, 1fr));
     /* Adjust grid columns dynamically */
-    gap: 2px;
-    border: 2px solid black;
-    padding: 5px;
+    gap: 0;
+    /* Remove gap between cells */
 }
-
-
-/* Styling for grid cells (letters) */
 
 .cell {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background-color: transparent;
+    padding: 10px;
+    /* Add padding to each cell */
     border: 1px solid black;
-    color: black;
-    font-size: 20px;
+    /* Add border around each cell */
+    text-align: center;
+    /* Center text within cell */
 }
 
-
-/* Styling for placed letters */
-
-.placed {
-    color: red;
+.word-cell {
+    background-color: yellow;
+    /* Change background color to highlight word cells */
 }
