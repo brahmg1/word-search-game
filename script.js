@@ -2,107 +2,127 @@
 const words = ["JAVASCRIPT", "HTML", "CSS", "REACT", "WEB", "DEVELOPMENT"];
 
 // Constants for grid size and letters
-const gridSize = 10;
+const gridSize = 12;
 const alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
 
-// Generate a random letter
+// Function to generate a random letter
 function getRandomLetter() {
     return alphabet.charAt(Math.floor(Math.random() * alphabet.length));
 }
 
-// Generate a random word grid
-function generateWordGrid() {
-    // Initialize an empty grid filled with random letters
-    const wordGrid = [];
-    for (let i = 0; i < gridSize; i++) {
-        const row = [];
-        for (let j = 0; j < gridSize; j++) {
-            row.push(getRandomLetter());
-        }
-        wordGrid.push(row);
-    }
+// Function to generate a random word grid asynchronously
+// Function to generate a random word grid asynchronously
+async function generateWordGrid() {
+    return new Promise((resolve, reject) => {
+        try {
+            const maxLength = Math.max(...words.map(word => word.length));
+            const grid = Array.from({ length: gridSize }, () => Array(gridSize).fill(''));
 
-    // Place words in the grid
-    for (const word of words) {
-        let placed = false;
-        let attempts = 0;
-        while (!placed && attempts < 100) { // Limit attempts to avoid infinite loops
-            attempts++;
-            // Choose a random starting position
-            const row = Math.floor(Math.random() * gridSize);
-            const col = Math.floor(Math.random() * gridSize);
-            const directionX = Math.random() < 0.5 ? 1 : -1;
-            const directionY = Math.random() < 0.5 ? 1 : -1;
-
-            // Check if word can be placed in the chosen direction
-            let newRow = row;
-            let newCol = col;
-            let fitsInGrid = true;
-            for (let i = 0; i < word.length; i++) {
-                if (newRow < 0 || newRow >= gridSize || newCol < 0 || newCol >= gridSize || wordGrid[newRow][newCol] !== '') {
-                    fitsInGrid = false;
-                    break;
+            for (const word of words) {
+                let placed = false;
+                let attempts = 0;
+                while (!placed && attempts < 100) {
+                    attempts++;
+                    const direction = Math.random() < 0.5 ? 1 : -1;
+                    const row = Math.floor(Math.random() * gridSize);
+                    const col = Math.floor(Math.random() * gridSize);
+                    let conflict = false;
+                    for (let i = 0; i < word.length; i++) {
+                        const newRow = row + (i * direction);
+                        const newCol = col + (i * direction);
+                        if (newRow < 0 || newRow >= gridSize || newCol < 0 || newCol >= gridSize || grid[newRow][newCol] !== '') {
+                            conflict = true;
+                            break;
+                        }
+                    }
+                    if (!conflict) {
+                        for (let i = 0; i < word.length; i++) {
+                            const newRow = row + (i * direction);
+                            const newCol = col + (i * direction);
+                            grid[newRow][newCol] = word[i];
+                        }
+                        console.log(`Placed word '${word}' at (${col + 1}, ${row + 1}) with direction ${direction > 0 ? 'forward' : 'backward'}`);
+                        placed = true;
+                    }
                 }
-                newRow += directionY;
-                newCol += directionX;
             }
 
-            // If word can be placed, insert it into the grid
-            if (fitsInGrid) {
-                newRow = row;
-                newCol = col;
-                for (let i = 0; i < word.length; i++) {
-                    wordGrid[newRow][newCol] = word[i];
-                    newRow += directionY;
-                    newCol += directionX;
+            // Fill remaining empty cells with random letters
+            for (let i = 0; i < gridSize; i++) {
+                for (let j = 0; j < gridSize; j++) {
+                    if (grid[i][j] === '') {
+                        grid[i][j] = getRandomLetter();
+                    }
                 }
-                placed = true;
             }
+
+            resolve(grid);
+        } catch (error) {
+            reject(error);
         }
-    }
-
-    return wordGrid;
-}
-
-// Function to display the word grid on the webpage
-function displayWordGrid(grid) {
-    const wordSearchGrid = document.getElementById("wordSearchGrid");
-
-    // Clear any existing content in the grid
-    wordSearchGrid.innerHTML = "";
-
-    // Loop through each row in the grid
-    grid.forEach(row => {
-        // Create a new row element
-        const rowElement = document.createElement("div");
-        rowElement.classList.add("row");
-
-        // Loop through each cell in the row
-        row.forEach(letter => {
-            // Create a new cell element
-            const cell = document.createElement("div");
-            cell.classList.add("cell");
-            // Set the text content of the cell to the letter
-            cell.textContent = letter;
-            // Append the cell to the row
-            rowElement.appendChild(cell);
-        });
-
-        // Append the row to the grid
-        wordSearchGrid.appendChild(rowElement);
     });
 }
 
 
+// Function to display the word grid on the webpage
+function displayWordGrid(grid) {
+    const wordSearchGrid = document.getElementById("wordSearchGrid");
+    wordSearchGrid.innerHTML = "";
+    grid.forEach(row => {
+        const rowElement = document.createElement("div");
+        rowElement.classList.add("row");
+        row.forEach(letter => {
+            const cell = document.createElement("div");
+            cell.classList.add("cell");
+            cell.textContent = letter;
+            rowElement.appendChild(cell);
+        });
+        wordSearchGrid.appendChild(rowElement);
+    });
+}
+
+// Function to display the word list on the webpage
+function displayWordList(words) {
+    const wordList = document.getElementById("wordList");
+    wordList.innerHTML = "<strong>Words to find:</strong><br>";
+    words.forEach(word => {
+        wordList.innerHTML += word + "<br>";
+    });
+}
+
+// Function to highlight words in the grid
+function highlightWords() {
+    const wordSearchGrid = document.getElementById("wordSearchGrid");
+    const cells = wordSearchGrid.querySelectorAll(".cell");
+    cells.forEach(cell => {
+        const letter = cell.textContent;
+        if (letter !== "") {
+            words.forEach(word => {
+                if (word.includes(letter)) {
+                    cell.style.color = "red";
+                }
+            });
+        }
+    });
+}
+
 // Function to handle the "Start Game" button click event
-function startGame() {
-    // Generate a new word grid
-    const wordGrid = generateWordGrid();
+async function startGame() {
+    try {
+        // Generate a new word grid asynchronously
+        const wordGrid = await generateWordGrid();
 
-    // Display the new word grid on the webpage
-    displayWordGrid(wordGrid);
+        // Display the new word grid on the webpage
+        displayWordGrid(wordGrid);
 
-    console.log("start");
+        // Display the word list on the webpage
+        displayWordList(words);
+
+        // // Highlight words in the grid
+        // highlightWords();
+    } catch (error) {
+        console.error('An error occurred:', error);
+    }
 }
 
 // Add event listener to the "Start Game" button
